@@ -1,20 +1,28 @@
-# Python / virtualenv
+#Python / virtualenv
 .venv/
 venv/
-de_pipeline/.venv/
-__pycache__/
+**/.venv/
+**/venv/
+pycache/
 *.pyc
 *.pyo
 *.pyd
-
-# macOS
+#dbt local config (never commit)
+profiles.yml
+.user.yml
+**/profiles.yml
+**/.user.yml
+#macOS
 .DS_Store
-
-# dbt
+#dbt artifacts
 target/
 dbt_packages/
 logs/
-
-# IDE / editor
+**/target/
+**/dbt_packages/
+**/logs/
+#IDE / editor
 .vscode/
 .idea/
+ignore entire dbt-dag
+dbt-dag/
