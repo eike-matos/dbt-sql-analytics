@@ -1,179 +1,100 @@
-# dbt-sql-analytics
+# data-engineering-projects
 
-Analytics project using **dbt**, **SQL** and **Python**.
+Monorepo for data engineering projects using **dbt**, **Snowflake**, and **Airflow**.
 
-## Tech stack
-
-- dbt
-- SQL
-- Python
-
-## Project structure (initial)
-
-- `models/` – core dbt models
-- `seeds/` – static seed data
-- `analysis/` – ad-hoc analysis models
-- `snapshots/` – snapshot definitions (if needed)
-- `macros/` – custom dbt macros
-- `tests/` – generic and singular tests
-- `python/` – helper Python scripts (to be added)
-
-## Development workflow
-
-- Long‑lived branches:
-- `main` – production
-- `qa` – testing / pre‑prod
-- `dev` – active development
-- Feature branches:
-  - `users/eike-matos/feature-<short-description>`
-- Commit messages:
-  - `[#EM-XXX] <message>`
-  - Example: `[#EM-001] update README`
+The goal is to centralize multiple pipelines and experiments under a single repository, each project living in its own folder.
 
 ---
 
-## Local setup
+## Projects
 
-### 1. Requirements
+### 1. `dbt-dag with de_pipeline`
 
-- macOS
-- Homebrew installed
-- Git installed
-- Python **3.11** (installed via Homebrew)
+Data engineering project focused on building an analytics pipeline using:
 
-Install Python 3.11:
+- **dbt** for data transformations
+- **Snowflake** as the data warehouse
+- **Airflow** for orchestration
+
+Project folder: `./dbt-dag/de_pipeline`
+
+> The detailed documentation and step‑by‑step instructions for this project live in `de_pipeline/README.md`.
+
+---
+
+## Tech stack
+
+Across projects in this repo, the main tools and technologies are:
+
+- **Python** (3.11+ recommended)
+- **dbt**
+- **Snowflake**
+- **Airflow**
+- **Git** + **GitHub**
+- **VS Code** (recommended editor)
+
+Each project may have its own specific versions and dependencies, documented inside its own folder.
+
+---
+
+## Global requirements
+
+These are the base tools expected on your machine before working with any project in this repo:
+
+- **macOS** (tested)
+- **Homebrew**
+- **Git**
+- **Python 3.11+**
+
+Install Python 3.11 via Homebrew:
 
 ```bash
 brew install python@3.11
-python3.11 --version   # should print Python 3.11.x
+python3.11 --version
 ```
 
-### 2. Clone the repository
+## Project-specific commands and workflows
 
-```bash
-git clone https://github.com/eike-matos/dbt-sql-analytics.git
-cd dbt-sql-analytics
-```
+From here, follow the specific README of each project (e.g. `de_pipeline/README.md`) for:
 
-### 3. Create and activate a virtual environment (Python 3.11)
+- Creating and activating a virtual environment
+- Installing project dependencies (dbt, adapters, Airflow, etc.)
+- Configuring Snowflake and dbt profiles
+- Running dbt commands (`dbt debug`, `dbt run`, `dbt test`)
+- Scheduling / orchestrating with Airflow (when applicable)
+- Git branching and PR workflow for that project
 
-```bash
-python3.11 -m venv .venv
-source .venv/bin/activate
+Each project folder contains its own `README.md` with the exact commands and steps.
 
-python --version   # should print Python 3.11.x
-```
-
-### 4. Install dbt (core + Snowflake adapter)
-
-```bash
-python -m pip install --upgrade pip
-python -m pip install dbt-core dbt-snowflake
-```
-
-### 5. Verify the version
-
-```bash
-dbt --version
-# or:
-# python -m dbt --version
-```
-
-## dbt profile (Snowflake) – local only, not committed
-
-This project uses a **local** dbt profile with Snowflake credentials.
-The file **`profiles.yml` must never be committed to Git**.
-
-### 1. Location of `profiles.yml`
-
-On macOS, dbt reads profiles from:
+## Repository structure (initial)
 
 ```text
-~/.dbt/profiles.yml
+.
+├── de_pipeline/          # dbt + Snowflake pipeline (first project)
+│   ├── README.md         # detailed documentation for de_pipeline
+│   ├── models/
+│   ├── macros/
+│   ├── tests/
+│   ├── snapshots/
+│   ├── seeds/
+│   └── ...
+├── .gitignore
+└── README.md             # global overview for all projects
 
-Note: This file is outside the repository and is specific to your machine/user.
-Important: Do not create a profiles.yml inside this repo. I also add profiles.yml to .gitignore to avoid accidental commits.
 ```
 
-### 2. Creating the profile
+## Contributing / workflow (high level)
 
-```bash
-From the project root (or a temporary folder), run:
-dbt init
-```
+Work is done in feature branches and then merged into environment branches, following this flow (per project/repo convention):
 
-When running `dbt init`:
+```text
+feature → dev → qa → main
 
-- Choose the **Snowflake** adapter.
-- When prompted, provide:
-  - **account (locator)**
-    - Example: `yyyyyy.east-us-2.azure`
-    - This is the Snowflake account identifier, **without** `https://` or `.snowflakecomputing.com`.
+Detailed branching and commit conventions for de_pipeline are described in de_pipeline/README.md.
 
-  - **user**
-    - Your Snowflake username (e.g. `YOUR_USERNAME`).
-
-  - **password**
-    - Your Snowflake password.
-
-  - **role**
-    - Example: `DBT_ROLE`.
-
-  - **warehouse**
-    - Example: `DBT_WAREHOUSE`.
-
-  - **database**
-    - Example: `DBT_DB`.
-
-  - **schema**
-    - Example: `DBT_SCHEMA`.
-
-dbt will write a profile for you into `~/.dbt/profiles.yml`.
-
-### Example Snowflake profile (for reference only)
-
-> Do **not** commit this file. It lives in `~/.dbt/profiles.yml` and contains secrets.
-
-```yaml
-de_pipeline:
-  target: dev
-  outputs:
-    dev:
-      type: snowflake
-      account: "yyyyy.east-us-2.azure"
-      user: "YOUR_USERNAME"
-      password: "YOUR_PASSWORD"
-      role: "DBT_ROLE"
-      warehouse: "DBT_WAREHOUSE"
-      database: "DBT_DB"
-      schema: "DBT_SCHEMA"
-      threads: 4
-      client_session_keep_alive: false
-
-In `dbt_project.yml`, the project is configured to use the `de_pipeline` profile:
-
-name: de_pipeline
-profile: de_pipeline
-```
-
-### Quick dbt command sequence
-
-From the dbt project root (where `dbt_project.yml` lives), with the virtualenv activated:
-
-```bash
-# 1. Verify configuration and connection
-dbt debug
-
-# 2. Run models
-dbt run
-
-If everything is configured correctly, you should see messages similar to:
-
-profiles.yml file [OK found and valid]
-dbt_project.yml file [OK found and valid]
-Connection test: [OK]
-
-1 of 1 OK created model <model_name> .................. [SUCCESS]
-Finished running 1 view in 0 hours 0 minutes X.X seconds
-
+New projects should:
+- Live in their own folder.
+- Have their own README.md.
+- Reuse the same Git workflow where it makes sense.
+- More sections will be added as the monorepo grows (CI/CD, Airflow deployment, shared libs, etc.).
 ```
