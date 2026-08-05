@@ -8,15 +8,15 @@ The goal is to centralize multiple pipelines and experiments under a single repo
 
 ## Projects
 
-### 1. `de_pipeline`
+### 1. `dbt-dag with de_pipeline`
 
 Data engineering project focused on building an analytics pipeline using:
 
 - **dbt** for data transformations
 - **Snowflake** as the data warehouse
-- (Planned) **Airflow** for orchestration
+- **Airflow** for orchestration
 
-Project folder: `./de_pipeline`
+Project folder: `./dbt-dag/de_pipeline`
 
 > The detailed documentation and step‑by‑step instructions for this project live in `de_pipeline/README.md`.
 
@@ -29,7 +29,7 @@ Across projects in this repo, the main tools and technologies are:
 - **Python** (3.11+ recommended)
 - **dbt**
 - **Snowflake**
-- **Airflow** (planned / per project)
+- **Airflow**
 - **Git** + **GitHub**
 - **VS Code** (recommended editor)
 
