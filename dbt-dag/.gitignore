@@ -1,14 +1,28 @@
-.git
-.env
+#Python / virtualenv
+.venv/
+venv/
+**/.venv/
+**/venv/
+pycache/
+*.pyc
+*.pyo
+*.pyd
+#dbt local config (never commit)
+profiles.yml
+.user.yml
+**/profiles.yml
+**/.user.yml
+#macOS
 .DS_Store
-airflow_settings.yaml
-__pycache__/
-astro
-.venv
-.astro/standalone/
-airflow-webserver.pid
-webserver_config.py
-airflow.cfg
-airflow.db
-.astro/*.local.yml
-.astro/*.local.yaml
+#dbt artifacts
+target/
+dbt_packages/
+logs/
+**/target/
+**/dbt_packages/
+**/logs/
+#IDE / editor
+.vscode/
+.idea/
+ignore entire dbt-dag
+dbt-dag/
