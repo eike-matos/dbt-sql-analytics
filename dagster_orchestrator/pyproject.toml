@@ -9,7 +9,8 @@ dependencies = [
   "dagster-cloud>=1.13,<1.14",
   "dagster-snowflake>=0.29,<0.30",
   "pymongo>=4.6,<5",
-  "dlt[snowflake]>=0.4,<0.5",
+  "dlt[snowflake]>=1.15,<2",
+  "dagster-embedded-elt>=0.29,<0.30",
   "scikit-learn>=1.5,<1.6",
 ]
 [project.optional-dependencies]
