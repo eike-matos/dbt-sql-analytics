@@ -1,13 +1,18 @@
-from dagster import Definitions, load_assets_from_modules
-from dagster_embedded_elt.dlt import DagsterDltResource
+from dotenv import load_dotenv
+load_dotenv()
+from dagster import Definitions, load_assets_from_modules, EnvVar
 
-from .assets import mongodb
+from .assets import mongodb, movies
+from .resources import snowflake_resource, dlt_resource
 
 mongodb_assets = load_assets_from_modules([mongodb])
+movies_assets = load_assets_from_modules([movies], group_name="movies")
+
 
 defs = Definitions(
-    assets=[*mongodb_assets],
+    assets=[*mongodb_assets, *movies_assets],
     resources={
-        "dlt": DagsterDltResource()
+        "dlt": dlt_resource,
+        "snowflake": snowflake_resource
     }
 )
