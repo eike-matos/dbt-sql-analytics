@@ -26,3 +26,10 @@ logs/
 .idea/
 ignore entire dbt-dag
 dbt-dag/
+.dlt/secrets.toml
+**/secrets.toml
+.tmp_dagster_home_*/
+*.db
+**/.dlt/
+.env
+**/.env
