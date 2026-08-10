@@ -1,35 +1,46 @@
-#Python / virtualenv
+# Python / virtualenv
 .venv/
 venv/
 **/.venv/
 **/venv/
-pycache/
+__pycache__/
+**/__pycache__/
 *.pyc
 *.pyo
 *.pyd
-#dbt local config (never commit)
+
+# dbt local config (never commit)
 profiles.yml
 .user.yml
 **/profiles.yml
 **/.user.yml
-#macOS
-.DS_Store
-#dbt artifacts
+
+# dbt artifacts
 target/
 dbt_packages/
 logs/
 **/target/
 **/dbt_packages/
 **/logs/
-#IDE / editor
+
+# macOS
+.DS_Store
+
+# IDE / editor
 .vscode/
 .idea/
-ignore entire dbt-dag
-dbt-dag/
-.dlt/secrets.toml
-**/secrets.toml
-.tmp_dagster_home_*/
-*.db
-**/.dlt/
+
+# Secrets - NEVER commit
 .env
 **/.env
+**/.dlt/secrets.toml
+**/secrets.toml
+**/airflow_settings.yaml
+
+# Dagster - local instance data (regenerated on every run)
+**/.tmp_dagster_home_*/
+**/*.db
+
+# dlt - internal state/cache
+**/.dlt/.sources
+**/.dlt/config.toml
