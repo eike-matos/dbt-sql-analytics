@@ -1,5 +1,5 @@
 from dagster_snowflake import SnowflakeResource
-from dagster import asset
+from dagster import asset, AutoMaterializePolicy
 from ..partitions import monthly_partition
 
 import os
@@ -78,7 +78,8 @@ def top_movies_by_month(context, snowflake: SnowflakeResource) -> None:
         movies_df.to_csv('data/top_movies_by_month.csv', index=False)
 
 @asset(
-    deps=["user_engagement"]
+    deps=["user_engagement"],
+    auto_materialize_policy=AutoMaterializePolicy.eager()
 )
 def top_movies_by_engagement() -> None:
     """
