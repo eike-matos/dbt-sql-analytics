@@ -1,6 +1,6 @@
 # data-engineering-projects
 
-Monorepo for data engineering projects using **dbt**, **Snowflake**, and **Airflow**.
+Monorepo for data engineering projects using **dbt**, **Snowflake**, **Airflow**, and **Dagster**.
 
 The goal is to centralize multiple pipelines and experiments under a single repository, each project living in its own folder.
 
@@ -8,7 +8,7 @@ The goal is to centralize multiple pipelines and experiments under a single repo
 
 ## Projects
 
-### 1. `dbt-dag with de_pipeline`
+### 1. `dbt-dag` — dbt + Snowflake + Airflow
 
 Data engineering project focused on building an analytics pipeline using:
 
@@ -16,9 +16,26 @@ Data engineering project focused on building an analytics pipeline using:
 - **Snowflake** as the data warehouse
 - **Airflow** for orchestration
 
-Project folder: `./dbt-dag/de_pipeline`
+Project folder: `./dbt-dag`
 
-> The detailed documentation and step‑by‑step instructions for this project live in `de_pipeline/README.md`.
+> The detailed documentation and step-by-step instructions for this project live in `dbt-dag/README.md`.
+
+### 2. `dagster_orchestrator` — Dagster + Snowflake + MongoDB
+
+Data engineering project focused on ingestion and transformation orchestrated with **Dagster**, using:
+
+- **Dagster** as the orchestrator (assets, sensors, resources)
+- **dlt (data load tool)** to extract data from MongoDB (Atlas `sample_mflix` dataset) and load into Snowflake
+- **Snowflake** as the data warehouse
+- **pandas / scikit-learn** for downstream transformations and embeddings (TSNE) on top of the loaded data
+
+Project folder: `./dagster_orchestrator`
+
+> The detailed documentation and step-by-step instructions for this project live in `dagster_orchestrator/README.md`.
+
+### 3. _(coming soon)_
+
+A third project will be added here as the monorepo grows.
 
 ---
 
@@ -28,7 +45,9 @@ Across projects in this repo, the main tools and technologies are:
 
 - **Python** (3.11+ recommended)
 - **dbt**
+- **Dagster** + **dagster-embedded-elt (dlt)**
 - **Snowflake**
+- **MongoDB Atlas**
 - **Airflow**
 - **Git** + **GitHub**
 - **VS Code** (recommended editor)
@@ -48,53 +67,64 @@ These are the base tools expected on your machine before working with any projec
 
 Install Python 3.11 via Homebrew:
 
-```bash
+\```bash
 brew install python@3.11
 python3.11 --version
-```
+\```
+
+---
 
 ## Project-specific commands and workflows
 
-From here, follow the specific README of each project (e.g. `de_pipeline/README.md`) for:
+From here, follow the specific README of each project (e.g. `dbt-dag/README.md`, `dagster_orchestrator/README.md`) for:
 
 - Creating and activating a virtual environment
-- Installing project dependencies (dbt, adapters, Airflow, etc.)
-- Configuring Snowflake and dbt profiles
-- Running dbt commands (`dbt debug`, `dbt run`, `dbt test`)
-- Scheduling / orchestrating with Airflow (when applicable)
+- Installing project dependencies
+- Configuring credentials (Snowflake, MongoDB, dbt profiles, etc.)
+- Running the pipeline (`dbt run`, `dagster dev`, Airflow DAGs, etc.)
 - Git branching and PR workflow for that project
 
 Each project folder contains its own `README.md` with the exact commands and steps.
 
-## Repository structure (initial)
+---
 
-```text
+## Repository structure
+
+\```
 .
-├── de_pipeline/          # dbt + Snowflake pipeline (first project)
-│   ├── README.md         # detailed documentation for de_pipeline
-│   ├── models/
-│   ├── macros/
-│   ├── tests/
-│   ├── snapshots/
-│   ├── seeds/
-│   └── ...
+├── dbt-dag/ # dbt + Snowflake + Airflow pipeline
+│ ├── README.md
+│ ├── dags/
+│ ├── include/
+│ └── ...
+├── dagster_orchestrator/ # Dagster + Snowflake + MongoDB pipeline
+│ ├── README.md
+│ ├── dagster_orchestrator/ # Dagster package (assets, definitions)
+│ ├── dagster_orchestrator_tests/
+│ ├── adhoc/
+│ ├── data/
+│ └── pyproject.toml
 ├── .gitignore
-└── README.md             # global overview for all projects
+└── README.md # this file — global overview for all projects
+\```
 
-```
+---
 
 ## Contributing / workflow (high level)
 
 Work is done in feature branches and then merged into environment branches, following this flow (per project/repo convention):
 
-```text
+\```
 feature → dev → qa → main
+\```
 
-Detailed branching and commit conventions for de_pipeline are described in de_pipeline/README.md.
+Detailed branching and commit conventions for each project are described in its own README.
 
 New projects should:
+
 - Live in their own folder.
-- Have their own README.md.
+- Have their own `README.md`.
 - Reuse the same Git workflow where it makes sense.
-- More sections will be added as the monorepo grows (CI/CD, Airflow deployment, shared libs, etc.).
-```
+- Not commit `.env` files, `secrets.toml`, or any credentials — see each project's `.gitignore`.
+
+More sections will be added as the monorepo grows (CI/CD, shared libs, etc.).
