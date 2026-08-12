@@ -27,3 +27,21 @@ variable "schemas" {
   type        = list(string)
   default     = ["RAW", "STAGING", "MARTS"]
 }
+
+variable "loader_role_name" {
+  description = "Role used by the Python ingestion script to write into RAW"
+  type        = string
+  default     = "LOADER_ROLE"
+}
+
+variable "transformer_role_name" {
+  description = "Role used by dbt to read RAW and write into STAGING/MARTS"
+  type        = string
+  default     = "TRANSFORMER_ROLE"
+}
+
+variable "reader_role_name" {
+  description = "Role used by Streamlit (or other BI tools) with read-only access to MARTS"
+  type        = string
+  default     = "READER_ROLE"
+}
