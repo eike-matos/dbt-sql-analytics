@@ -25,7 +25,7 @@ variable "auto_suspend_seconds" {
 variable "schemas" {
   description = "List of schemas to create inside the database"
   type        = list(string)
-  default     = ["RAW", "STAGING", "MARTS"]
+  default     = ["RAW", "STAGING", "INTERMEDIATE", "MARTS"]
 }
 
 variable "loader_role_name" {

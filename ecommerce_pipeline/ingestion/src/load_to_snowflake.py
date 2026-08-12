@@ -37,11 +37,9 @@ def _get_connection():
         schema=config.schema,
     )
 
-
 def _read_header(file_path: Path) -> list[str]:
-    with open(file_path, newline="", encoding="utf-8") as f:
+    with open(file_path, newline="", encoding="utf-8-sig") as f:
         return next(csv.reader(f))
-
 
 def _create_raw_table(cursor, table_name: str, columns: list[str]) -> None:
     column_defs = ", ".join(f'"{col.upper()}" VARCHAR' for col in columns)

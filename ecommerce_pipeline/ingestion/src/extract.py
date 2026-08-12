@@ -40,7 +40,7 @@ def _validate_single_file(key: str, filename: str) -> FileValidationResult:
             f"Download the Olist dataset and place the CSVs under {DATA_DIR}."
         )
 
-    with open(file_path, newline="", encoding="utf-8") as f:
+    with open(file_path, newline="", encoding="utf-8-sig") as f:
         reader = csv.reader(f)
         header = next(reader)
         row_count = sum(1 for _ in reader)

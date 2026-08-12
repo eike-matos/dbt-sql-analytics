@@ -174,3 +174,11 @@ resource "snowflake_grant_privileges_to_account_role" "reader_marts_views" {
     }
   }
 }
+
+resource "snowflake_grant_privileges_to_account_role" "transformer_intermediate_full" {
+  privileges         = ["USAGE", "CREATE TABLE", "CREATE VIEW"]
+  account_role_name  = snowflake_account_role.transformer.name
+  on_schema {
+    schema_name = "\"${snowflake_database.this.name}\".\"INTERMEDIATE\""
+  }
+}
