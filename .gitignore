@@ -44,3 +44,17 @@ logs/
 # dlt - internal state/cache
 **/.dlt/.sources
 **/.dlt/config.toml
+# Terraform
+**/.terraform/
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+**/*.tfstate
+**/*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+!*.tfvars.example
+
+# Streamlit
+**/.streamlit/secrets.toml
