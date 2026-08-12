@@ -1,0 +1,9 @@
+snowflake_organization_name = "your_org_name"
+snowflake_account_name      = "your_account_name"
+snowflake_user               = "your_username"
+snowflake_password           = "your_password"
+snowflake_role               = "ACCOUNTADMIN"
+
+database_name  = "ECOMMERCE_DB"
+warehouse_name = "ECOMMERCE_WH"
+warehouse_size = "XSMALL"

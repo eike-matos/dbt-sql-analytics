@@ -1,0 +1,29 @@
+variable "database_name" {
+  description = "Name of the project's main database"
+  type        = string
+  default     = "ECOMMERCE_DB"
+}
+
+variable "warehouse_name" {
+  description = "Name of the Snowflake warehouse"
+  type        = string
+  default     = "ECOMMERCE_WH"
+}
+
+variable "warehouse_size" {
+  description = "Warehouse size (XSMALL, SMALL, MEDIUM...)"
+  type        = string
+  default     = "XSMALL"
+}
+
+variable "auto_suspend_seconds" {
+  description = "Seconds of inactivity before auto-suspending the warehouse (cost control)"
+  type        = number
+  default     = 60
+}
+
+variable "schemas" {
+  description = "List of schemas to create inside the database"
+  type        = list(string)
+  default     = ["RAW", "STAGING", "MARTS"]
+}
