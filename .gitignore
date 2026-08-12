@@ -58,3 +58,6 @@ crash.*.log
 
 # Streamlit
 **/.streamlit/secrets.toml
+
+# Raw datasets (downloaded locally, not versioned)
+**/data/raw/*.csv
