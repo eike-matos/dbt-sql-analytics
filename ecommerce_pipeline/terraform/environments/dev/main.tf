@@ -12,6 +12,7 @@ module "snowflake_warehouse" {
   database_name  = var.database_name
   warehouse_name = var.warehouse_name
   warehouse_size = var.warehouse_size
+  snowflake_user  = var.snowflake_user
 }
 
 output "database_name" {

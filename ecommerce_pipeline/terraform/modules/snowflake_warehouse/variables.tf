@@ -45,3 +45,8 @@ variable "reader_role_name" {
   type        = string
   default     = "READER_ROLE"
 }
+
+variable "snowflake_user" {
+  description = "Snowflake user that will receive the loader, transformer and reader roles for local testing"
+  type        = string
+}
