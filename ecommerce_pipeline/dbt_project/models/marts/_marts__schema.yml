@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: One row per customer, with order history summary.
+    columns:
+      - name: customer_id
+        description: Primary key.
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_products
+    description: One row per product, with sales summary.
+    columns:
+      - name: product_id
+        description: Primary key.
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_sellers
+    description: One row per seller, with sales summary.
+    columns:
+      - name: seller_id
+        description: Primary key.
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_orders
+    description: >
+      Fact table at order item grain. One row per order_id + order_item_id,
+      enriched with delivery performance, payment totals, and review scores.
+      Incrementally loaded using order_purchase_at as the watermark.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_id
+            - order_item_id
+    columns:
+      - name: order_id
+        description: Foreign key to dim_customers (via customer_id) and order-level attributes.
+        tests:
+          - not_null
+      - name: customer_id
+        description: Foreign key to dim_customers.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_id
+      - name: product_id
+        description: Foreign key to dim_products.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: product_id
+      - name: seller_id
+        description: Foreign key to dim_sellers.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_sellers')
+              field: seller_id
+      - name: total_item_value
+        description: price + freight_value for this line item.
+        tests:
+          - not_null
