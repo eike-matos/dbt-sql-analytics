@@ -1,0 +1,143 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: One row per customer, as registered in the Olist marketplace.
+    columns:
+      - name: customer_id
+        description: Primary key. Unique identifier for a customer's order-level record.
+        tests:
+          - unique
+          - not_null
+      - name: customer_unique_id
+        description: Identifier that persists across multiple orders from the same real customer.
+        tests:
+          - not_null
+
+  - name: stg_orders
+    description: One row per order placed on the platform.
+    columns:
+      - name: order_id
+        description: Primary key. Unique identifier for an order.
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Foreign key to stg_customers.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+      - name: order_status
+        description: Current status of the order (e.g. delivered, shipped, canceled).
+        tests:
+          - not_null
+
+  - name: stg_products
+    description: One row per product listed on the platform.
+    columns:
+      - name: product_id
+        description: Primary key. Unique identifier for a product.
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_sellers
+    description: One row per seller registered on the platform.
+    columns:
+      - name: seller_id
+        description: Primary key. Unique identifier for a seller.
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_order_items
+    description: One row per item within an order (an order can have multiple items).
+    columns:
+      - name: order_id
+        description: Foreign key to stg_orders.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: product_id
+        description: Foreign key to stg_products.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_products')
+              field: product_id
+      - name: seller_id
+        description: Foreign key to stg_sellers.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_sellers')
+              field: seller_id
+      - name: price
+        description: Price of the item, in BRL.
+        tests:
+          - not_null
+
+  - name: stg_order_payments
+    description: One row per payment transaction associated with an order.
+    columns:
+      - name: order_id
+        description: Foreign key to stg_orders.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: payment_value
+        description: Value of the payment, in BRL.
+        tests:
+          - not_null
+
+  - name: stg_order_reviews
+    description: >
+      One row per customer review linked to an order. Note: review_id is not
+      globally unique - the Olist source data links the same review to
+      multiple orders in some cases (documented data quality quirk of this
+      dataset). The true grain of this table is review_id + order_id.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - review_id
+            - order_id
+    columns:
+      - name: review_id
+        description: Identifier for a review. Not unique alone - see model-level test.
+        tests:
+          - not_null
+      - name: order_id
+        description: Foreign key to stg_orders.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: review_score
+        description: Score given by the customer, from 1 to 5.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5]
+
+  - name: stg_geolocation
+    description: Zip-code-level geolocation reference data.
+    columns:
+      - name: geolocation_zip_code_prefix
+        description: Zip code prefix used to join with customers/sellers.
+        tests:
+          - not_null
+
+  - name: stg_product_category_translation
+    description: Translation table from Portuguese to English product category names.
+    columns:
+      - name: product_category_name
+        description: Original category name, in Portuguese.
+        tests:
+          - not_null
