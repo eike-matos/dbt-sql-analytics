@@ -14,7 +14,6 @@ from pathlib import Path
 from dagster import AssetExecutionContext, AssetKey, AssetOut, MaterializeResult, multi_asset
 
 INGESTION_SRC = Path(__file__).resolve().parents[3] / "ingestion"
-sys.path.insert(0, str(INGESTION_SRC))
 
 RAW_TABLE_KEYS = {
     "customers": "raw_customers",
@@ -41,6 +40,14 @@ _outs = {
     "and loads them into RAW tables, one output per table.",
 )
 def raw_ecommerce_data(context: AssetExecutionContext):
+    # Inserted here (not just at module import time) so it's guaranteed to
+    # run in whichever process actually executes this step, since Dagster
+    # may run steps in a different process than the one that loaded the
+    # asset definitions.
+    ingestion_src_str = str(INGESTION_SRC)
+    if ingestion_src_str not in sys.path:
+        sys.path.insert(0, ingestion_src_str)
+
     from src.extract import validate_raw_files
     from src.load_to_snowflake import load_all
 
