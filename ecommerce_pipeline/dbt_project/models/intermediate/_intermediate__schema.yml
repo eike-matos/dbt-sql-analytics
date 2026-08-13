@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: int_orders_enriched
+    description: >
+      One row per order, enriched with customer location and delivery
+      performance metrics (delivery_days, days_late, was_delivered_late).
+      Grain: one row per order_id.
+    columns:
+      - name: order_id
+        description: Primary key. One row per order.
+        tests:
+          - unique
+          - not_null
+      - name: was_delivered_late
+        description: >
+          True if the order was delivered after the estimated delivery date.
+          Null if the order has not been delivered yet.
+
+  - name: int_order_items_enriched
+    description: >
+      One row per order item, enriched with product category (English
+      translation applied where available) and seller location.
+      Grain: one row per order_id + order_item_id.
+    columns:
+      - name: order_id
+        description: Foreign key to int_orders_enriched.
+        tests:
+          - not_null
+      - name: product_category_name_english
+        description: >
+          Product category translated to English. Falls back to the original
+          Portuguese name when no translation exists in the source data.
