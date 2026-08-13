@@ -141,8 +141,22 @@ resource "snowflake_grant_privileges_to_account_role" "transformer_marts_full" {
   }
 }
 
+resource "snowflake_grant_privileges_to_account_role" "transformer_intermediate_full" {
+  privileges         = ["USAGE", "CREATE TABLE", "CREATE VIEW"]
+  account_role_name  = snowflake_account_role.transformer.name
+  on_schema {
+    schema_name = "\"${snowflake_database.this.name}\".\"INTERMEDIATE\""
+  }
+}
+
 # ---------------------------------------------------------------------------
-# READER_ROLE: read-only access to MARTS (this is what Streamlit uses)
+# READER_ROLE: read-only access to MARTS (this is what Streamlit uses),
+# plus read-only access to INTERMEDIATE (some dashboard queries read
+# int_orders_enriched directly for delivery/location breakdowns).
+#
+# Both "all" (covers objects that already exist) and "future" (covers
+# objects dbt creates later) grants are needed - "all" alone does not
+# retroactively apply to tables created after the grant was applied.
 # ---------------------------------------------------------------------------
 
 resource "snowflake_grant_privileges_to_account_role" "reader_marts_usage" {
@@ -164,6 +178,17 @@ resource "snowflake_grant_privileges_to_account_role" "reader_marts_tables" {
   }
 }
 
+resource "snowflake_grant_privileges_to_account_role" "reader_marts_tables_future" {
+  privileges         = ["SELECT"]
+  account_role_name  = snowflake_account_role.reader.name
+  on_schema_object {
+    future {
+      object_type_plural = "TABLES"
+      in_schema           = "\"${snowflake_database.this.name}\".\"MARTS\""
+    }
+  }
+}
+
 resource "snowflake_grant_privileges_to_account_role" "reader_marts_views" {
   privileges         = ["SELECT"]
   account_role_name  = snowflake_account_role.reader.name
@@ -175,10 +200,43 @@ resource "snowflake_grant_privileges_to_account_role" "reader_marts_views" {
   }
 }
 
-resource "snowflake_grant_privileges_to_account_role" "transformer_intermediate_full" {
-  privileges         = ["USAGE", "CREATE TABLE", "CREATE VIEW"]
-  account_role_name  = snowflake_account_role.transformer.name
+resource "snowflake_grant_privileges_to_account_role" "reader_marts_views_future" {
+  privileges         = ["SELECT"]
+  account_role_name  = snowflake_account_role.reader.name
+  on_schema_object {
+    future {
+      object_type_plural = "VIEWS"
+      in_schema           = "\"${snowflake_database.this.name}\".\"MARTS\""
+    }
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "reader_intermediate_usage" {
+  privileges         = ["USAGE"]
+  account_role_name  = snowflake_account_role.reader.name
   on_schema {
     schema_name = "\"${snowflake_database.this.name}\".\"INTERMEDIATE\""
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "reader_intermediate_views" {
+  privileges         = ["SELECT"]
+  account_role_name  = snowflake_account_role.reader.name
+  on_schema_object {
+    all {
+      object_type_plural = "VIEWS"
+      in_schema           = "\"${snowflake_database.this.name}\".\"INTERMEDIATE\""
+    }
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "reader_intermediate_views_future" {
+  privileges         = ["SELECT"]
+  account_role_name  = snowflake_account_role.reader.name
+  on_schema_object {
+    future {
+      object_type_plural = "VIEWS"
+      in_schema           = "\"${snowflake_database.this.name}\".\"INTERMEDIATE\""
+    }
   }
 }
